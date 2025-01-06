@@ -35,6 +35,6 @@ void MainWindow::on_pushButton_2_clicked()
         qDebug() << "Failed to run the script:" << process.errorString();
     }
 
-    qDebug() << "Output:" << process.readAllStandardOutput().toStdString();
+    std::cout << "Output:" << process.readAllStandardOutput().toStdString();
 }
 
