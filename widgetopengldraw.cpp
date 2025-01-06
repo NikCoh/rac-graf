@@ -452,6 +452,7 @@ void WidgetOpenGLDraw::keyPressEvent(QKeyEvent *event) {
         M = glm::rotate(M, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         M = glm::rotate(M, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         M = glm::rotate(M, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        meshes[currentMesh].modelMatrix = M;
 
     }
 
