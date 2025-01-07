@@ -53,7 +53,6 @@ bool WidgetOpenGLDraw::loadOBJ(const std::string& filePath, std::vector<Vertex>&
     }
 
     std::string line;
-    long long i = 0;
     while (std::getline(file, line)) {
         std::istringstream stream(line);
         std::string prefix;
@@ -99,10 +98,8 @@ bool WidgetOpenGLDraw::loadOBJ(const std::string& filePath, std::vector<Vertex>&
             indices.push_back(currentIndex + 1);
             indices.push_back(currentIndex + 2);
         }
-        std::cout << ++i << std::endl;
 
     }
-    std::cout << vertices.max_size() << std::endl;
 
     return true;
 }
@@ -220,7 +217,6 @@ void WidgetOpenGLDraw::initializeGL() {
 
 void WidgetOpenGLDraw::addMesh(std::string filePath){
     makeCurrent();
-    std::cout << filePath << std::endl;
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
