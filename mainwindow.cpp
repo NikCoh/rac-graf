@@ -3,7 +3,7 @@
 
 #include <QFileDialog>
 #include <iostream>
-#include <QProces>
+#include <QProcess>
 #include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
