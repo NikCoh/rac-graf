@@ -212,7 +212,24 @@ void WidgetOpenGLDraw::initializeGL() {
 
     P = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
     V = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 vMatrix = glm::mat4(1.0f);
 
+    vMatrix[0][0] = 0.999846f;  vMatrix[0][1] = -0.00171678f; vMatrix[0][2] = -0.0174986f;  vMatrix[0][3] = 0.0f;
+    vMatrix[1][0] = 0.0022038f; vMatrix[1][1] = 0.99961f;    vMatrix[1][2] = 0.0278509f;   vMatrix[1][3] = 0.0f;
+    vMatrix[2][0] = 0.0174439f; vMatrix[2][1] = -0.0278851f; vMatrix[2][2] = 0.999459f;    vMatrix[2][3] = 0.0f;
+    vMatrix[3][0] = -0.5f;      vMatrix[3][1] = 0.0f;        vMatrix[3][2] = -5.5f;       vMatrix[3][3] = 1.0f;
+
+    V = vMatrix;
+
+    addMesh("C:/Users/cohni/Downloads/kolata haubata.obj");
+    glm::mat4 matrix = glm::mat4(1.0f);
+    matrix[0][0] = 0.0868244f;  matrix[0][1] = -0.0871558f; matrix[0][2] = 0.992405f; matrix[0][3] = 0.0f;
+    matrix[1][0] = 0.00759615f; matrix[1][1] = 0.996195f;   matrix[1][2] = 0.0868242f; matrix[1][3] = 0.0f;
+    matrix[2][0] = -0.996195f;  matrix[2][1] = 0.0f;        matrix[2][2] = 0.087156f;  matrix[2][3] = 0.0f;
+    matrix[3][0] = 0.181742f;   matrix[3][1] = -1.61743f;   matrix[3][2] = 4.18257f;   matrix[3][3] = 1.0f;
+    meshes[meshes.size()-1].modelMatrix = matrix;
+    addMesh("C:/Users/cohni/Downloads/clovek.obj");
+    meshes[meshes.size()-1].modelMatrix = matrix;
 }
 
 void WidgetOpenGLDraw::addMesh(std::string filePath){
