@@ -61,7 +61,7 @@ def call_transcription(text):
     signal = 6 * device + action
     print("Sending signal", signal, "to MQTT")
     return signal
-    # 0 & 6 error
+    # <=0 & 6 & >=11 error
     # 1 radio on    2 radio off     3 radio up      4 radio down       5 radio change
     # 7 ac on       8 ac off        9 ac up        10 ac down
 

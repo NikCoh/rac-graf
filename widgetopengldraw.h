@@ -33,6 +33,8 @@ public:
     bool useOrthogonal = true;
 
     void addMesh(std::string filePath);
+    std::vector<Mesh> meshes;
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -49,7 +51,6 @@ private:
 
     glm::mat4 P, V, M = glm::mat4(1.0f);
 
-    std::vector<Mesh> meshes;
     unsigned int currentMesh = 0;
 
     bool rightMousePressed = false;
