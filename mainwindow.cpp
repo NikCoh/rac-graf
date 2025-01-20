@@ -92,6 +92,6 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_pushButton_3_clicked()
 {
     std::string filePath = QFileDialog::getOpenFileName(this, "Select a file", "", "All Files (*.*);;Text Files (*.txt)").toStdString();
-    // ui->widget->addTexture(filePath);
+    ui->widget->addTexture(filePath);
     ui->widget->update();
 }
