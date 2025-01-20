@@ -223,7 +223,7 @@ void WidgetOpenGLDraw::initializeGL() {
     V = vMatrix;
 
     addMesh("C:/Users/cohni/Downloads/kolata haubata.obj");
-    addTexture("../../default.png");
+    addTexture("../../textures/default.png");
     glm::mat4 matrix = glm::mat4(1.0f);
     matrix[0][0] = 0.0868244f;  matrix[0][1] = -0.0871558f; matrix[0][2] = 0.992405f; matrix[0][3] = 0.0f;
     matrix[1][0] = 0.00759615f; matrix[1][1] = 0.996195f;   matrix[1][2] = 0.0868242f; matrix[1][3] = 0.0f;
@@ -231,7 +231,7 @@ void WidgetOpenGLDraw::initializeGL() {
     matrix[3][0] = 0.181742f;   matrix[3][1] = -1.61743f;   matrix[3][2] = 4.18257f;   matrix[3][3] = 1.0f;
     meshes[meshes.size()-1].modelMatrix = matrix;
     addMesh("C:/Users/cohni/Downloads/clovek.obj");
-    addTexture("../../default.png");
+    addTexture("../../textures/default.png");
     meshes[meshes.size()-1].modelMatrix = matrix;
 }
 
