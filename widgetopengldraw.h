@@ -19,6 +19,7 @@ struct Mesh {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     glm::mat4 modelMatrix;
+    QImage t;
 };
 
 
@@ -34,7 +35,8 @@ public:
 
     void addMesh(std::string filePath);
     std::vector<Mesh> meshes;
-
+    void updateTexture();
+    void addTexture(std::string filePath);
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -58,7 +60,7 @@ private:
 
     glm::vec3 lightPos;
     glm::vec3 lightColor;
-    glm::vec3 objectColor;
+//    glm::vec3 objectColor;
     float ambientStrength;
     float specularStrength;
     float shininess;
