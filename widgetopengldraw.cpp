@@ -8,6 +8,7 @@
 #include <sstream>
 #include <QOpenGLVersionFunctionsFactory>
 #include <QImage>
+#include <QElapsedTimer>
 
 
 WidgetOpenGLDraw::WidgetOpenGLDraw(QWidget *parent) : QOpenGLWidget(parent) {
@@ -263,6 +264,8 @@ void WidgetOpenGLDraw::addTexture(std::string filePath){
 
 
 void WidgetOpenGLDraw::paintGL() {
+    QElapsedTimer timer;
+    timer.start();
     currentMesh = currentMesh % meshes.size();
     gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -307,6 +310,8 @@ void WidgetOpenGLDraw::paintGL() {
     }
 
     gl->glUseProgram(0);
+    qint64 elapsed = timer.elapsed();
+    qDebug() << meshes.size() << ": " << elapsed << "ms";
 }
 
 void WidgetOpenGLDraw::resizeGL(int w, int h) {
