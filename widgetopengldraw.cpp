@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <QOpenGLVersionFunctionsFactory>
+#include <QImage>
 
 
 WidgetOpenGLDraw::WidgetOpenGLDraw(QWidget *parent) : QOpenGLWidget(parent) {
@@ -149,10 +150,11 @@ void WidgetOpenGLDraw::PrevediSencilnike() {
 
     out vec4 out_Color;
 
+    uniform sampler2D texture1;
     uniform vec3 lightPos;
     uniform vec3 viewPos;
     uniform vec3 lightColor;
-    uniform vec3 objectColor;
+    //uniform vec3 objectColor;
     uniform float ambientStrength;
     uniform float specularStrength;
     uniform float shininess;
@@ -171,9 +173,9 @@ void WidgetOpenGLDraw::PrevediSencilnike() {
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
         vec3 specular = specularStrength * spec * lightColor;
 
-        vec3 result = (ambient + diffuse + specular) * objectColor;
-
-        out_Color = vec4(result, 1.0);
+        vec4 textureColor = texture(texture1, TexCoord);
+        vec3 result = (ambient + diffuse + specular) * textureColor.rgb;
+        out_Color = vec4(result, textureColor.a);
     }
 )";
 
@@ -204,7 +206,6 @@ void WidgetOpenGLDraw::initializeGL() {
 
     lightPos = glm::vec3(0.0f, 10.0f, 0.0f);
     lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-    objectColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
     ambientStrength = 0.1f;
     specularStrength = 0.1f;
@@ -222,6 +223,7 @@ void WidgetOpenGLDraw::initializeGL() {
     V = vMatrix;
 
     addMesh("C:/Users/cohni/Downloads/kolata haubata.obj");
+    addTexture("../../default.png");
     glm::mat4 matrix = glm::mat4(1.0f);
     matrix[0][0] = 0.0868244f;  matrix[0][1] = -0.0871558f; matrix[0][2] = 0.992405f; matrix[0][3] = 0.0f;
     matrix[1][0] = 0.00759615f; matrix[1][1] = 0.996195f;   matrix[1][2] = 0.0868242f; matrix[1][3] = 0.0f;
@@ -229,6 +231,7 @@ void WidgetOpenGLDraw::initializeGL() {
     matrix[3][0] = 0.181742f;   matrix[3][1] = -1.61743f;   matrix[3][2] = 4.18257f;   matrix[3][3] = 1.0f;
     meshes[meshes.size()-1].modelMatrix = matrix;
     addMesh("C:/Users/cohni/Downloads/clovek.obj");
+    addTexture("../../default.png");
     meshes[meshes.size()-1].modelMatrix = matrix;
 }
 
@@ -243,10 +246,24 @@ void WidgetOpenGLDraw::addMesh(std::string filePath){
         generateMesh(mesh, vertices, indices);
         meshes.push_back(mesh);
     }
+    currentMesh = meshes.size()-1;
+
     doneCurrent();
 }
 
+void WidgetOpenGLDraw::addTexture(std::string filePath){
+    QImage t;
+    t.load(QString::fromStdString(filePath));
+    t=t.convertToFormat(QImage::Format_ARGB32);
+    if(meshes.empty()){
+        return;
+    }
+    meshes[currentMesh].t = t;
+}
+
+
 void WidgetOpenGLDraw::paintGL() {
+    currentMesh = currentMesh % meshes.size();
     gl->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     gl->glEnable(GL_DEPTH_TEST);
@@ -258,7 +275,6 @@ void WidgetOpenGLDraw::paintGL() {
     gl->glUniform3fv(gl->glGetUniformLocation(id_sencilni_program, "lightPos"), 1, glm::value_ptr(lightPos));
     gl->glUniform3fv(gl->glGetUniformLocation(id_sencilni_program, "viewPos"), 1, glm::value_ptr(V));
     gl->glUniform3fv(gl->glGetUniformLocation(id_sencilni_program, "lightColor"), 1, glm::value_ptr(lightColor));
-    gl->glUniform3fv(gl->glGetUniformLocation(id_sencilni_program, "objectColor"), 1, glm::value_ptr(objectColor));
 
     gl->glUniform1f(gl->glGetUniformLocation(id_sencilni_program, "ambientStrength"), ambientStrength);
     gl->glUniform1f(gl->glGetUniformLocation(id_sencilni_program, "specularStrength"), specularStrength);
@@ -266,6 +282,18 @@ void WidgetOpenGLDraw::paintGL() {
 
 
     for (const auto& mesh : meshes) {
+        GLuint textureID;
+        gl->glGenTextures(1, &textureID);
+        gl->glBindTexture(GL_TEXTURE_2D, textureID);
+        gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mesh.t.width(),
+                         mesh.t.height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, mesh.t.bits());
+        gl->glTexParameteri(GL_TEXTURE_2D,
+                            GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        gl->glTexParameteri(GL_TEXTURE_2D,
+                            GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        gl->glActiveTexture(GL_TEXTURE0);
+        gl->glBindTexture(GL_TEXTURE_2D, textureID);
+        gl->glUniform1i(gl->glGetUniformLocation(id_sencilni_program, "texture1"), 0);
         gl->glBindVertexArray(mesh.VAO);
 
         glm::mat4 modelView = MVP * mesh.modelMatrix;
@@ -431,18 +459,6 @@ void WidgetOpenGLDraw::keyPressEvent(QKeyEvent *event) {
         lightColor.b = glm::max(0.0f, lightColor.b - colorSpeed);
     } else if (event->key() == Qt::Key_3) {
         lightColor.b = glm::min(1.0f, lightColor.b + colorSpeed);
-    } else if (event->key() == Qt::Key_Slash) {
-        objectColor.r = glm::max(0.0f, objectColor.r - colorSpeed);
-    } else if (event->key() == Qt::Key_8) {
-        objectColor.r = glm::min(1.0f, objectColor.r + colorSpeed);
-    } else if (event->key() == Qt::Key_Asterisk) {
-        objectColor.g = glm::max(0.0f, objectColor.g - colorSpeed);
-    } else if (event->key() == Qt::Key_9) {
-        objectColor.g = glm::min(1.0f, objectColor.g + colorSpeed);
-    } else if (event->key() == Qt::Key_Minus) {
-        objectColor.b = glm::max(0.0f, objectColor.b - colorSpeed);
-    } else if (event->key() == Qt::Key_Plus) {
-        objectColor.b = glm::min(1.0f, objectColor.b + colorSpeed);
     } else if (event->key() == Qt::Key_Y) {
         ambientStrength -= strengthSpeed;
     } else if (event->key() == Qt::Key_X) {
